@@ -4,11 +4,8 @@ import torch
 
 
 class DefaultConfig(object):
-    model = 'MF_Naive'  # 使用的模型，名字必须与models/__init__.py中的名字一致
-    if model == 'MF_Naive':
-        is_ips = False
-    elif model == 'MF_IPS':
-        is_ips = True
+    model = 'MF_IPS'  # 使用的模型，名字必须与models/__init__.py中的名字一致
+    is_ips = True
     train_data = './data/yahoo/train.txt'  # 训练集存放路径
     test_data = './data/yahoo/test2.txt'  # 测试集存放路径
 

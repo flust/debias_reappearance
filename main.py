@@ -8,7 +8,7 @@ from tqdm import tqdm
 from time import time
 from evaluate import *
 import numpy as np
-# import argparse
+import argparse
 
 
 def train():
@@ -74,5 +74,17 @@ def test(model, test_data):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Demo of argparse")
+    parser.add_argument('--model', default='MF_IPS')
+    parser.add_argument('--is_ips', default=True)
+    args = parser.parse_args()
+    opt.model = args.model
+    opt.is_ips = args.is_ips
+
+    # print config
+    from inspect import getsource
+    source = (getsource(opt.__class__))
+    print(source)
+
     model = train()
     print('end')
