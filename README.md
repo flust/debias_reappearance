@@ -29,6 +29,9 @@
    Reappearance experiments with model "CausEProd" in pytorch.
 
    The evaluation part of this reappearance is the same as below.
-
-
-
+   
+   | Yahoo!R3  | MAE  | MSE  |
+   | --------- | ---- | ---- |
+   | CausEProb |      |      |
+   
+   
