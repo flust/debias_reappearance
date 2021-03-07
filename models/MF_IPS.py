@@ -43,7 +43,7 @@ class MF_IPS(nn.Module):
 
         self.apply(self._init_weights)
 
-        self.loss = IPSLoss()
+        self.loss = IPSLoss(device)
 
     def _init_weights(self, module):
         if isinstance(module, nn.Embedding):
@@ -60,7 +60,7 @@ class MF_IPS(nn.Module):
         return preds.squeeze()
 
     def calculate_loss(self, user_list, item_list, label_list):
-        return self.loss(self.forward(user_list, item_list), label_list, self.inverse_propensity, self.device)
+        return self.loss(self.forward(user_list, item_list), label_list, self.inverse_propensity)
 
     def predict(self, user, item):
         return self.forward(user, item)
