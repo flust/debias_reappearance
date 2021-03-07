@@ -4,9 +4,9 @@
 
    Reappearance experiments with model "MF_IPS" and "MF_Naive" in pytorch.
 
-   Dataset that this repo used is "Yahoo!R3".
+   Dataset used is "Yahoo!R3".
 
-   data file introduction:
+   data file:
 
    * train.txt: origin train data in Yahoo!R3
    * test.txt: origin test data in Yahoo!R3
