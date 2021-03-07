@@ -21,7 +21,7 @@ class IPSLoss(nn.Module):
             list(map(lambda x: (inverse_propensity[int(label0[x]) - 1]), range(0, len(label0))))).to(self.device)
 
         # unweightedloss = F.binary_cross_entropy(output, torch.Tensor(label), reduce='none')
-        unweightedloss = output - torch.Tensor(label)
+        unweightedloss = output - label
         unweightedloss = torch.pow(unweightedloss, 2)
         weightedloss = unweightedloss * weight
         self.loss = torch.sum(weightedloss)

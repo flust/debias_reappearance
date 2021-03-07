@@ -114,8 +114,6 @@ def train_CausEProd():
             loss.backward()
             optimizer.step()
 
-        if epoch == 100:
-            print('hello')
         t2 = time()
         if epoch % opt.verbose == 0:
             print('epoch', epoch)
@@ -133,7 +131,9 @@ def train_CausEProd():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Demo of argparse")
     # parser.add_argument('--model', default='MF_Naive') # 1.0210 1.7074
-    parser.add_argument('--model', default='MF_IPS')
+    parser.add_argument('--model', default='MF_IPS') # 0.8750 1.3433    0.8739 1.3451
+    # parser.add_argument('--model', default='CausEProd') # 1.2693 2.0319
+
     args = parser.parse_args()
     opt.model = args.model
 
@@ -143,5 +143,6 @@ if __name__ == '__main__':
     if opt.model == 'MF_Naive' or opt.model == 'MF_IPS':
         model = train_MF_Naive_or_MF_IPS()
     elif opt.model == 'CausEProd':
+        opt.batch_size = 1
         model = train_CausEProd()
     print('end')

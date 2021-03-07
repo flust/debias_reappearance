@@ -42,12 +42,13 @@ class CausEProd(nn.Module):
 
     def calculate_loss(self, user_list, item_list, label_list):
         user_embedding = self.user_e(user_list)
-        # if [user, item] in s_c:
-        #     self.item_e_t.requires_grad = False
-        #     self.item_e_c.requires_grad = True
-        # elif [user, item] in s_t:
-        #     self.item_e_t.requires_grad = True
-        #     self.item_e_c.requires_grad = False
+
+        if [user_list, item_list] in s_c:
+            self.item_e_t.requires_grad = False
+            self.item_e_c.requires_grad = True
+        elif [user_list, item_list] in s_t:
+            self.item_e_t.requires_grad = True
+            self.item_e_c.requires_grad = False
 
         item_embedding_c = self.item_e_c(item_list)
         item_embedding_t = self.item_e_t(item_list)
