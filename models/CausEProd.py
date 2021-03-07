@@ -38,20 +38,28 @@ class CausEProd(nn.Module):
         preds += (user_embedding * item_embedding).sum(dim=1, keepdim=True)
         return preds.squeeze()
 
-    # def one_loss(self, user, item, label):
-
-    def calculate_loss(self, user_list, item_list, label_list):
+    def calculate_loss(self, user_list, item_list, label_list, control):
         user_embedding = self.user_e(user_list)
 
-        if [user_list, item_list] in s_c:
-            self.item_e_t.requires_grad = False
-            self.item_e_c.requires_grad = True
-        elif [user_list, item_list] in s_t:
-            self.item_e_t.requires_grad = True
-            self.item_e_c.requires_grad = False
+        # if control:
+        #     self.item_e_t.requires_grad = False
+        #     self.item_e_c.requires_grad = True
+        # else:
+        #     self.item_e_t.requires_grad = True
+        #     self.item_e_c.requires_grad = False
 
         item_embedding_c = self.item_e_c(item_list)
         item_embedding_t = self.item_e_t(item_list)
+
+        # for i in range(user_list.shape[0]):
+        #     user = user_list[i]
+        #     item = item_list[i]
+        #     if [user, item] in self.s_c:
+        #         self.item_e_t[i].requires_grad = False
+        #         self.item_e_c[i].requires_grad = True
+        #     elif [user, item] in self.s_t:
+        #         self.item_e_t[i].requires_grad = True
+        #         self.item_e_c[i].requires_grad = False
 
         dot_c = (user_embedding * item_embedding_c).sum(dim=1, keepdim=True)
         pred_c = dot_c + self.user_b(user_list) + self.item_b(item_list)

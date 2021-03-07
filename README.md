@@ -15,23 +15,23 @@
 
    Results is as follow:
 
-   | Yahoo!R3             | MAE   | MSE   |
-   | -------------------- | ----- | ----- |
-   | MF_IPS( in paper )   | 0.810 | 0.989 |
-   | MF_IPS               |       |       |
-   | MF_Naive( in paper ) | 1.154 | 1.891 |
-   | MF_Naive             |       |       |
+   | Yahoo!R3             | MAE    | MSE    |
+   | -------------------- | ------ | ------ |
+   | MF_IPS( in paper )   | 0.810  | 0.989  |
+   | MF_IPS               | 0.8787 | 1.3653 |
+   | MF_Naive( in paper ) | 1.154  | 1.891  |
+   | MF_Naive             | 1.0136 | 1.6804 |
 
 
 
-2. 2020 - Improving Ad Click Prediction by Considering Non-displayed Events
+2. Causal Embeddings for Recommendation
 
    Reappearance experiments with model "CausEProd" in pytorch.
 
    The evaluation part of this expriment is the same as before.
    
-   | Yahoo!R3  | MAE  | MSE  |
-   | --------- | ---- | ---- |
-   | CausEProb |      |      |
+   | Yahoo!R3  | MAE    | MSE    |
+   | --------- | ------ | ------ |
+   | CausEProb | 0.9138 | 1.2734 |
    
    
