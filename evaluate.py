@@ -10,7 +10,7 @@ def evaluate_model(model, val_data, inverse_propensity, opt):
     item_num = max(item)
     preds = model.predict(user, item).to(opt.device)
     #print(preds)
-    if opt.is_ips:
+    if opt.is_eval_ips:
         mse = MSE_ips(preds, true, user_num, item_num, inverse_propensity)
         mae = MAE_ips(preds, true, user_num, item_num, inverse_propensity)
         rmse = RMSE_ips(preds, true, user_num, item_num, inverse_propensity)

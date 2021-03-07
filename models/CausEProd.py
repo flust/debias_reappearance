@@ -7,7 +7,7 @@ from torch.nn.init import normal_
 
 class CausEProd(nn.Module):
     def __init__(self, num_users, num_items, embedding_size,
-                 reg_c, reg_t, reg_tc, s_c, s_t):
+                 reg_c, reg_t, reg_tc, s_c, s_t, device='cpu'):
         super(CausEProd, self).__init__()
         self.user_e = nn.Embedding(num_users, embedding_size)
         self.item_e_c = nn.Embedding(num_items, embedding_size)
@@ -19,6 +19,9 @@ class CausEProd(nn.Module):
         self.reg_tc = reg_tc
         self.s_c = s_c
         self.s_t = s_t
+
+        self.apply(self._init_weights)
+
         self.loss_c = nn.MSELoss()
         self.loss_t = nn.MSELoss()
 

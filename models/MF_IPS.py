@@ -7,9 +7,10 @@ from torch.nn.init import normal_
 
 class IPSLoss(nn.Module):
     # use propensity score to debias
-    def __init__(self):
+    def __init__(self, device):
         super(IPSLoss, self).__init__()
         self.loss = 0.
+        self.device = device
         # self.MSELoss = nn.MSELoss()
 
     def forward(self, output, label, inverse_propensity):
@@ -17,7 +18,7 @@ class IPSLoss(nn.Module):
         label0 = label.cpu().numpy()
 
         weight = torch.Tensor(
-            list(map(lambda x: (inverse_propensity[int(label0[x]) - 1]), range(0, len(label0)))))
+            list(map(lambda x: (inverse_propensity[int(label0[x]) - 1]), range(0, len(label0))))).to(self.device)
 
         # unweightedloss = F.binary_cross_entropy(output, torch.Tensor(label), reduce='none')
         unweightedloss = output - torch.Tensor(label)
@@ -28,9 +29,9 @@ class IPSLoss(nn.Module):
 
 
 class MF_IPS(nn.Module):
-    def __init__(self, num_users, num_items, embedding_size, inverse_propensity):
+    def __init__(self, num_users, num_items, embedding_size, inverse_propensity, device):
         super(MF_IPS, self).__init__()
-
+        self.device = device
         self.num_users = num_users
         self.num_items = num_items
         self.inverse_propensity = inverse_propensity
@@ -39,6 +40,8 @@ class MF_IPS(nn.Module):
         self.item_e = nn.Embedding(self.num_items, embedding_size)
         self.user_b = nn.Embedding(self.num_users, 1)
         self.item_b = nn.Embedding(self.num_items, 1)
+
+        self.apply(self._init_weights)
 
         self.loss = IPSLoss()
 
@@ -57,7 +60,7 @@ class MF_IPS(nn.Module):
         return preds.squeeze()
 
     def calculate_loss(self, user_list, item_list, label_list):
-        return self.loss(self.forward(user_list, item_list), label_list, self.inverse_propensity)
+        return self.loss(self.forward(user_list, item_list), label_list, self.inverse_propensity, self.device)
 
     def predict(self, user, item):
         return self.forward(user, item)

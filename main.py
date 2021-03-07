@@ -13,21 +13,20 @@ import argparse
 
 def train_MF_Naive_or_MF_IPS():
     # train model 'MF_Naive' or 'MF_IPS'
-    print('train_1 begin')
+    print('train_MF_Naive_or_MF_IPS begin')
 
     # collect data
     train_data = Yahoo(opt.train_data)
     val_data = Yahoo(opt.test_data)
-    if opt.is_ips:
+    if opt.model == 'MF_IPS':
         inverse_propensity = np.reciprocal(np.loadtxt(opt.propensity_score))
     else:
         inverse_propensity = np.ones(5)
-    train_dataloader = DataLoader(train_data, opt.batch_size,
-                        shuffle=True, num_workers=opt.num_workers)
+    train_dataloader = DataLoader(train_data, opt.batch_size, shuffle=True)
 
     # get model
     model = getattr(models, opt.model)(train_data.users_num + 1, train_data.items_num + 1,
-                                       opt.embedding_size, inverse_propensity)
+                                       opt.embedding_size, inverse_propensity, opt.device)
     model.to(opt.device)
     lr = opt.lr
     optimizer = model.get_optimizer(lr, opt.weight_decay)
@@ -39,7 +38,6 @@ def train_MF_Naive_or_MF_IPS():
     # train
     model.train()
     for epoch in range(opt.max_epoch):
-        print('epoch', epoch)
         t1 = time()
         for i, data in tqdm(enumerate(train_dataloader)):
             # train model
@@ -56,6 +54,7 @@ def train_MF_Naive_or_MF_IPS():
             print('hello')
         t2 = time()
         if epoch % opt.verbose == 0:
+            print('epoch', epoch)
             (mae, mse, rmse) = evaluate_model(model, val_data, inverse_propensity, opt)
             print('Iteration %d[%.1f s]: MAE = %.4f, MSE = %.4f, RMSE = %.4f [%.1f s]'
                   % (epoch, t2 - t1, mae, mse, rmse, time() - t2))
@@ -70,7 +69,7 @@ def train_MF_Naive_or_MF_IPS():
 def test_1(model, test_data):
     # test model 'MF_Naive' or 'MF_IPS'
     test_data = Yahoo(opt.test_data)
-    if is_ips:
+    if opt.model == 'MF_IPS':
         inverse_propensity = np.reciprocal(np.loadtxt(opt.propensity_score))
     else:
         inverse_propensity = np.ones(5)
@@ -80,14 +79,13 @@ def test_1(model, test_data):
 
 def train_CausEProd():
     # train model 'CausEProd'
-    print('train_1 begin')
+    print('train_CausEProd begin')
 
     # collect data
     train_data = Yahoo2(opt.s_c_data, opt.s_t_data)
     val_data = Yahoo(opt.test_data)
 
-    train_dataloader = DataLoader(train_data, opt.batch_size,
-                        shuffle=True, num_workers=opt.num_workers)
+    train_dataloader = DataLoader(train_data, opt.batch_size,shuffle=True)
 
     # get model
     model = getattr(models, opt.model)(train_data.users_num + 1, train_data.items_num + 1,
@@ -104,7 +102,6 @@ def train_CausEProd():
     # train
     model.train()
     for epoch in range(opt.max_epoch):
-        print('epoch', epoch)
         t1 = time()
         for i, data in tqdm(enumerate(train_dataloader)):
             # train model
@@ -121,6 +118,7 @@ def train_CausEProd():
             print('hello')
         t2 = time()
         if epoch % opt.verbose == 0:
+            print('epoch', epoch)
             (mae, mse, rmse) = evaluate_model(model, val_data, None, opt)
             print('Iteration %d[%.1f s]: MAE = %.4f, MSE = %.4f, RMSE = %.4f [%.1f s]'
                   % (epoch, t2 - t1, mae, mse, rmse, time() - t2))
@@ -134,16 +132,13 @@ def train_CausEProd():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Demo of argparse")
-    parser.add_argument('--model', default='CausEProd')
-    parser.add_argument('--is_ips', default=False)
+    # parser.add_argument('--model', default='MF_Naive') # 1.0210 1.7074
+    parser.add_argument('--model', default='MF_IPS')
     args = parser.parse_args()
     opt.model = args.model
-    if opt.model == 'CausEProd':
-        args.is_ips = False
-    opt.is_ips = args.is_ips
 
     # print config
-    print(opt)
+    print('\n'.join(['%s:%s' % item for item in opt.__dict__.items()]))
 
     if opt.model == 'MF_Naive' or opt.model == 'MF_IPS':
         model = train_MF_Naive_or_MF_IPS()

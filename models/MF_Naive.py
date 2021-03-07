@@ -6,7 +6,7 @@ from torch.nn.init import normal_
 
 
 class MF_Naive(nn.Module):
-    def __init__(self, num_users, num_items, embedding_size, inverse_propensity):
+    def __init__(self, num_users, num_items, embedding_size, inverse_propensity, device='cpu'):
         super(MF_Naive, self).__init__()
 
         self.num_users = num_users
@@ -17,6 +17,8 @@ class MF_Naive(nn.Module):
         self.item_e = nn.Embedding(self.num_items, embedding_size)
         self.user_b = nn.Embedding(self.num_users, 1)
         self.item_b = nn.Embedding(self.num_items, 1)
+
+        self.apply(self._init_weights)
 
         self.loss = nn.MSELoss()
 
