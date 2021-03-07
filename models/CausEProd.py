@@ -45,6 +45,7 @@ class CausEProd(nn.Module):
         # elif [user, item] in s_t:
         #     self.item_e_t.requires_grad = True
         #     self.item_e_c.requires_grad = False
+
         item_embedding_c = self.item_e_c(item_list)
         item_embedding_t = self.item_e_t(item_list)
 
@@ -52,6 +53,7 @@ class CausEProd(nn.Module):
         pred_c = dot_c + self.user_b(user_list) + self.item_b(item_list)
         dot_t = (user_embedding * item_embedding_t).sum(dim=1, keepdim=True)
         pred_t = dot_t + self.user_b(user_list) + self.item_b(item_list)
+
         loss = self.loss_c(pred_c, label_list)
         loss += self.loss_t(pred_t, label_list)
         loss_reg_tc = self.reg_tc * torch.norm(item_embedding_c - item_embedding_t, 2)
