@@ -13,8 +13,21 @@
    * test1.txt: sample from test data of Yahoo!R3 and it contains 2700 interactions ( 5% of total interactions, and it is used for calculating propensity score ). ( This data is also used as S_t in CausEProd model )
    * test2.txt: remain 95% data of the test data of Yahoo!R3. ( This data is for test in experiments )
 
-   Results is as follow:
+   
 
+   Run this experiment:
+   
+   ```
+   python main.py --model=MF_Naive
+   python main.py --model=MF_IPS
+   ```
+   
+   The parameters can be changed in config.py `DefaultConfig`
+   
+   
+   
+   Results is as follow:
+   
    | Yahoo!R3             | MAE    | MSE    |
    | -------------------- | ------ | ------ |
    | MF_IPS( in paper )   | 0.810  | 0.989  |
@@ -33,5 +46,15 @@
    | Yahoo!R3  | MAE    | MSE    |
    | --------- | ------ | ------ |
    | CausEProb | 0.9138 | 1.2734 |
+   
+   
+   
+   Run this experiment:
+   
+   ```
+   python main.py --model=CausEProd
+   ```
+   
+   The parameters can be changed in config.py `DefaultConfig`
    
    
