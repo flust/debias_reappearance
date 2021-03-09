@@ -9,15 +9,15 @@ from time import time
 from torch.utils.data import DataLoader
 from torch.nn.init import normal_
 
-TRAIN_DATA_PATH = './train.txt'
-TEST_DATA_PATH = './test.txt'
-S_c_FILE = './S_c.txt'
-S_t_FILE = './S_t.txt'
-S_va_FILE = './S_ve.txt'
-S_te_FILE = './S_te.txt'
+TRAIN_DATA_PATH = '../raw_data/train.txt'
+TEST_DATA_PATH = '../raw_data/test.txt'
+S_c_FILE = 'S_c.txt'  # 180086
+S_t_FILE = 'S_t.txt'
+S_va_FILE = 'S_ve.txt'
+S_te_FILE = 'S_te.txt'
 
 TRAIN = False
-PREPARE_S_c = False # 180086
+PREPARE_S_c = False
 PREPARE_S_t = True
 DEVICE = 'cpu'
 BATCH_SIZE = 128  # batch size

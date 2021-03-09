@@ -6,10 +6,12 @@ import torch
 class DefaultConfig(object):
     model = 'MF_Naive'  # 使用的模型，与models/__init__.py中的名字一致
     is_eval_ips = False
+
     train_data = './data/yahoo/train.txt'  # 训练集存放路径
     test_data = './data/yahoo/test2.txt'  # 测试集存放路径
     s_c_data = './data/yahoo/train.txt'
     s_t_data = './data/yahoo/test1.txt'
+
     reg_c = 0.001
     reg_t = 0.001
     reg_tc = 0.001

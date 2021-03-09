@@ -159,8 +159,12 @@ if __name__ == '__main__':
     print('\n'.join(['%s:%s' % item for item in opt.__dict__.items()]))
 
     if opt.model == 'MF_Naive' or opt.model == 'MF_IPS':
+        opt.train_data = './data/yahoo/1/train.txt'
+        opt.test_data = './data/yahoo/1/test2.txt'
         model = train_MF_Naive_or_MF_IPS()
     elif opt.model == 'CausEProd':
+        opt.s_c_data = './data/yahoo/2/train.txt'
+        opt.s_t_data = './data/yahoo/2/test1.txt'
         model = train_CausEProd()
     elif opt.model == 'FFM':
         model = train_FFM()
