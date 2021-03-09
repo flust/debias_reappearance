@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 
-class Yahoo(data.Dataset):
+class Yahoo1(data.Dataset):
     def __init__(self, filename):
         raw_matrix = np.loadtxt(filename)
         self.users_num = int(max(raw_matrix[:, 0]))

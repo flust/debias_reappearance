@@ -43,10 +43,6 @@
 
    The evaluation part of this expriment is the same as before.
    
-   | Yahoo!R3  | MAE    | MSE    |
-   | --------- | ------ | ------ |
-   | CausEProb | 0.9138 | 1.2734 |
-   
    
    
    Run this experiment:
@@ -56,5 +52,13 @@
    ```
    
    The parameters can be changed in config.py `DefaultConfig`
+   
+   
+   
+   | Yahoo!R3  | MAE    | MSE    |
+   | --------- | ------ | ------ |
+   | CausEProb | 0.9138 | 1.2734 |
+   
+   
    
    

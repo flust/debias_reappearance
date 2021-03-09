@@ -2,7 +2,7 @@ from config import opt
 import os
 import torch as t
 import models
-from data.dataset import Yahoo, Yahoo2
+from data.dataset import Yahoo1, Yahoo2
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from time import time
@@ -16,8 +16,8 @@ def train_MF_Naive_or_MF_IPS():
     print('train_MF_Naive_or_MF_IPS begin')
 
     # collect data
-    train_data = Yahoo(opt.train_data)
-    val_data = Yahoo(opt.test_data)
+    train_data = Yahoo1(opt.train_data)
+    val_data = Yahoo1(opt.test_data)
     if opt.model == 'MF_IPS':
         inverse_propensity = np.reciprocal(np.loadtxt(opt.propensity_score))
     else:
@@ -68,7 +68,7 @@ def train_MF_Naive_or_MF_IPS():
 
 def test_1(model, test_data):
     # test model 'MF_Naive' or 'MF_IPS'
-    test_data = Yahoo(opt.test_data)
+    test_data = Yahoo1(opt.test_data)
     if opt.model == 'MF_IPS':
         inverse_propensity = np.reciprocal(np.loadtxt(opt.propensity_score))
     else:
@@ -83,7 +83,7 @@ def train_CausEProd():
 
     # collect data
     train_data = Yahoo2(opt.s_c_data, opt.s_t_data)
-    val_data = Yahoo(opt.test_data)
+    val_data = Yahoo2(opt.test_data)
 
     train_dataloader_s_c = DataLoader(train_data.s_c, opt.batch_size, shuffle=True)
     train_dataloader_s_t = DataLoader(train_data.s_t, opt.batch_size, shuffle=True)
@@ -141,11 +141,16 @@ def train_CausEProd():
     return model
 
 
+def train_FFM():
+    return 0
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Demo of argparse")
     # parser.add_argument('--model', default='MF_Naive') # 1.0210 1.7074
     # parser.add_argument('--model', default='MF_IPS') # 0.8750 1.3433    0.8739 1.3451
-    parser.add_argument('--model', default='CausEProd') # 1.0371 1.4658
+    # parser.add_argument('--model', default='CausEProd') # 1.0371 1.4658
+    parser.add_argument('--model', default='CausEProd')
 
     args = parser.parse_args()
     opt.model = args.model
@@ -157,4 +162,6 @@ if __name__ == '__main__':
         model = train_MF_Naive_or_MF_IPS()
     elif opt.model == 'CausEProd':
         model = train_CausEProd()
+    elif opt.model == 'FFM':
+        model = train_FFM()
     print('end')
