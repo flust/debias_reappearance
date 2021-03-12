@@ -27,6 +27,8 @@ class MF_Naive(nn.Module):
             normal_(module.weight.data, mean=0.0, std=0.1)
 
     def forward(self, user, item):
+        user = user - 1
+        item = item - 1
         user_embedding = self.user_e(user)
         item_embedding = self.item_e(item)
 

@@ -2,22 +2,21 @@ import torch
 import torch.nn as nn
 import numpy as np
 import pandas as pd
-import torch.nn.functional as F
 from torch.utils import data
+from torch.utils.data import DataLoader
 from tqdm import tqdm
 from time import time
-from torch.utils.data import DataLoader
 from torch.nn.init import normal_
 
-TRAIN_DATA_PATH = '../raw_data/train.txt'
-TEST_DATA_PATH = '../raw_data/test.txt'
-S_c_FILE = 'S_c.txt'  # 180086
+TRAIN_DATA_PATH = './../raw_data/train.txt'
+TEST_DATA_PATH = './../raw_data/test.txt'
+S_c_FILE = 'S_c.txt'  #
 S_t_FILE = 'S_t.txt'
-S_va_FILE = 'S_ve.txt'
+S_va_FILE = 'S_va.txt'
 S_te_FILE = 'S_te.txt'
 
-TRAIN = False
-PREPARE_S_c = False
+TRAIN = True
+PREPARE_S_c = True
 PREPARE_S_t = True
 DEVICE = 'cpu'
 BATCH_SIZE = 128  # batch size
@@ -64,6 +63,8 @@ class MF_Naive(nn.Module):
             normal_(module.weight.data, mean=0.0, std=0.1)
 
     def forward(self, user, item):
+        user = user - 1
+        item = item - 1
         user_embedding = self.user_e(user)
         item_embedding = self.item_e(item)
 
@@ -127,7 +128,7 @@ if __name__ == '__main__':
     train_data = Yahoo(TRAIN_DATA_PATH)
     train_dataloader = DataLoader(train_data, BATCH_SIZE)
 
-    model = MF_Naive(train_data.users_num + 1, train_data.items_num + 1, EMBEDDING_SIZE)
+    model = MF_Naive(train_data.users_num, train_data.items_num, EMBEDDING_SIZE)
     model.to(DEVICE)
 
     optimizer = model.get_optimizer(LR, WEIGHT_DECAY)
@@ -166,7 +167,6 @@ if __name__ == '__main__':
     if PREPARE_S_c:
         model.load_state_dict(torch.load(str(type(model)) + "-dataprepare.pth"))
 
-        #
         interaction_num = 0
         with open(S_c_FILE, 'ab') as f:
 
@@ -177,7 +177,8 @@ if __name__ == '__main__':
             # print(interaction.shape, label_list.shape)
             target = train_data.data[pred_list > 2.5, :]
 
-            target[target[:, 2] != 5, 2] = -1
+            # target[target[:, 2] != 5, 2] = -1
+            target[target[:, 2] != 5, 2] = 0
             target[target[:, 2] == 5, 2] = 1
 
             interaction_num += target.shape[0]
@@ -199,13 +200,16 @@ if __name__ == '__main__':
         S_te = df.drop_duplicates(keep=False)
 
         S_t = S_t.values
-        S_t[S_t[:, 2] != 5, 2] = -1
+        # S_t[S_t[:, 2] != 5, 2] = -1
+        S_t[S_t[:, 2] != 5, 2] = 0
         S_t[S_t[:, 2] == 5, 2] = 1
         S_va = S_va.values
-        S_va[S_va[:, 2] != 5, 2] = -1
+        # S_va[S_va[:, 2] != 5, 2] = -1
+        S_va[S_va[:, 2] != 5, 2] = 0
         S_va[S_va[:, 2] == 5, 2] = 1
         S_te = S_te.values
-        S_te[S_te[:, 2] != 5, 2] = -1
+        # S_te[S_te[:, 2] != 5, 2] = -1
+        S_te[S_te[:, 2] != 5, 2] = 0
         S_te[S_te[:, 2] == 5, 2] = 1
 
         print(S_t.shape)
