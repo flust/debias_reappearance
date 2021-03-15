@@ -30,6 +30,8 @@ class CausEProd(nn.Module):
             normal_(module.weight.data, mean=0.0, std=0.1)
 
     def forward(self, user, item):
+        user = user - 1
+        item = item - 1
         user_embedding = self.user_e(user)
         item_embedding = self.item_e_c(item)
 
@@ -39,6 +41,8 @@ class CausEProd(nn.Module):
         return preds.squeeze()
 
     def calculate_loss(self, user_list, item_list, label_list, control):
+        user_list = user_list - 1
+        item_list = item_list - 1
         user_embedding = self.user_e(user_list)
 
         # if control:

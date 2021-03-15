@@ -1,4 +1,4 @@
-from metrics import MSE, MAE, RMSE, MSE_ips, MAE_ips, RMSE_ips
+from metrics import MSE, MAE, RMSE, MSE_ips, MAE_ips, RMSE_ips, AUC, NLL
 import torch
 
 
@@ -20,3 +20,7 @@ def evaluate_model(model, val_data, inverse_propensity, opt):
         mse = MSE(preds, true)
         rmse = RMSE(preds, true)
     return mae, mse, rmse
+
+
+def evaluate_model_3(true, preds):
+    return NLL(true, preds), AUC(true, preds)

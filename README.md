@@ -43,10 +43,6 @@
 
    The evaluation part of this expriment is the same as before.
    
-   | Yahoo!R3  | MAE    | MSE    |
-   | --------- | ------ | ------ |
-   | CausEProb | 0.9138 | 1.2734 |
-   
    
    
    Run this experiment:
@@ -57,4 +53,43 @@
    
    The parameters can be changed in config.py `DefaultConfig`
    
+   
+   
+   | Yahoo!R3  | MAE    | MSE    |
+   | --------- | ------ | ------ |
+   | CausEProb | 0.9138 | 1.2734 |
+   
+   
+   
+3. Improving Ad Click Prediction by Considering Non-displayed Events
+
+   Reappearance experiments in pytorch.
+
+   The evaluation part of this expriment is as in paper.
+
+   
+
+   Run this experiment:
+
+   ```
+   python main.py --model=New
+   ```
+
+   The parameters can be changed in config.py `DefaultConfig`
+
+   
+
+   | Yahoo!R3(10 epoch BCELoss) | NLL(in paper) | NLL     | AUC(in paper) | AUC     |
+   | -------------------------- | ------------- | ------- | ------------- | ------- |
+   | average($S_c$)             | +0.0%         | +0.0%   | +0.0%         | +0.0%   |
+   | average($S_t$)             | +79.1%        | +22.69% | +0.0%         | +0.0%   |
+   | FM($S_c$)                  | -7.7%         | +23.01% | +36.4%        | +34.76% |
+   | FM($S_t$)                  | -20.7%        | -0.03%  | +4.6%         | +3.06%  |
+   | FM($S_c \cup S_t$)         | +0.2%         | +23.15% | +36.4%        | +34.96% |
+   | IPS                        | +62.2%        | +18.50% | +23.2%        | +33.57% |
+   | CausE                      | +6.8%         | /       | +37.8%        | /       |
+   | New(avg)                   | +79.1%        | +17.64% | +51.8%        | +33.06% |
+   | New(item-avg)              | +76.8%        | /       | +54.2%        | /       |
+   | New(complex)               | -0.2%         | /       | +37.4%        | /       |
+
    

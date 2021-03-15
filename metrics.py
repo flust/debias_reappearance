@@ -1,3 +1,6 @@
+from sklearn.metrics import roc_auc_score
+
+
 def MSE(preds, true):
     squaredError = []
     for i in range(len(preds)):
@@ -51,3 +54,15 @@ def RMSE_ips(preds, true, user_num, item_num, inverse_propensity):
         squaredError.append(val * val * inverse_propensity[int(true[i]) - 1])
     from math import sqrt
     return sqrt(sum(squaredError) / (user_num * item_num))
+
+
+def AUC(true, preds):
+    return roc_auc_score(true, preds)
+
+
+def NLL(true, preds):
+    import math
+    s = 0
+    for i in range(len(true)):
+        s += math.log(1 + math.exp(- true[i] * preds[i]))
+    return - s / len(true)
