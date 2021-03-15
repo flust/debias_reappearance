@@ -26,14 +26,14 @@ class DefaultConfig(object):
     propensity_score_3 = './data/yahoo/3/propensity_score.txt'
 
     device = 'cpu'
-    batch_size = 128  # batch size
+    batch_size = 64  # batch size
     embedding_size = 16
 
     # debug_file = '/tmp/debug'  # if os.path.exists(debug_file): enter ipdb
     # result_file = 'result.csv'
 
-    max_epoch = 2
-    verbose = 10
+    max_epoch = 10
+    verbose = 1
     lr = 0.001  # initial learning rate
     lr_decay = 0.5  # when val_loss increase, lr = lr*lr_decay
     weight_decay = 1e-5

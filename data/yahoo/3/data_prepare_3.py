@@ -10,12 +10,12 @@ from torch.nn.init import normal_
 
 TRAIN_DATA_PATH = './../raw_data/train.txt'
 TEST_DATA_PATH = './../raw_data/test.txt'
-S_c_FILE = 'S_c.txt'  #
+S_c_FILE = 'S_c.txt'  # 179828
 S_t_FILE = 'S_t.txt'
 S_va_FILE = 'S_va.txt'
 S_te_FILE = 'S_te.txt'
 
-TRAIN = True
+TRAIN = False
 PREPARE_S_c = True
 PREPARE_S_t = True
 DEVICE = 'cpu'
@@ -177,8 +177,8 @@ if __name__ == '__main__':
             # print(interaction.shape, label_list.shape)
             target = train_data.data[pred_list > 2.5, :]
 
-            # target[target[:, 2] != 5, 2] = -1
-            target[target[:, 2] != 5, 2] = 0
+            target[target[:, 2] != 5, 2] = -1
+            # target[target[:, 2] != 5, 2] = 0
             target[target[:, 2] == 5, 2] = 1
 
             interaction_num += target.shape[0]
@@ -200,16 +200,16 @@ if __name__ == '__main__':
         S_te = df.drop_duplicates(keep=False)
 
         S_t = S_t.values
-        # S_t[S_t[:, 2] != 5, 2] = -1
-        S_t[S_t[:, 2] != 5, 2] = 0
+        S_t[S_t[:, 2] != 5, 2] = -1
+        # S_t[S_t[:, 2] != 5, 2] = 0
         S_t[S_t[:, 2] == 5, 2] = 1
         S_va = S_va.values
-        # S_va[S_va[:, 2] != 5, 2] = -1
-        S_va[S_va[:, 2] != 5, 2] = 0
+        S_va[S_va[:, 2] != 5, 2] = -1
+        # S_va[S_va[:, 2] != 5, 2] = 0
         S_va[S_va[:, 2] == 5, 2] = 1
         S_te = S_te.values
-        # S_te[S_te[:, 2] != 5, 2] = -1
-        S_te[S_te[:, 2] != 5, 2] = 0
+        S_te[S_te[:, 2] != 5, 2] = -1
+        # S_te[S_te[:, 2] != 5, 2] = 0
         S_te[S_te[:, 2] == 5, 2] = 1
 
         print(S_t.shape)

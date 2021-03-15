@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.nn.init import xavier_normal_
+from .loss import FMLoss
 
 class FeaturesLinear(torch.nn.Module):
 
@@ -54,12 +55,14 @@ class FactorizationMachine(torch.nn.Module):
 
 
 class FM(torch.nn.Module):
-    def __init__(self, field_dims, embed_dim, inverse_propensity, device='cpu'):
+    def __init__(self, field_dims, embed_dim, inverse_propensity, impute_label=None, device='cpu'):
         super().__init__()
         self.embedding = FeaturesEmbedding(field_dims, embed_dim)
         self.linear = FeaturesLinear(field_dims)
         self.fm = FactorizationMachine(reduce_sum=True)
         self.loss = nn.BCELoss()
+        # self.loss = FMLoss()
+        # self.loss = nn.NLLLoss()
 
     def forward(self, x):
         """

@@ -7,7 +7,7 @@ from .FM import FeaturesLinear, FeaturesEmbedding, FactorizationMachine
 
 
 class FM_IPS(torch.nn.Module):
-    def __init__(self, field_dims, embed_dim, inverse_propensity, device='cpu'):
+    def __init__(self, field_dims, embed_dim, inverse_propensity, impute_label=None, device='cpu'):
         super().__init__()
         self.inverse_propensity = inverse_propensity
         self.device = device
