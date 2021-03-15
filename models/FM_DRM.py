@@ -31,12 +31,12 @@ class FM_DRM(torch.nn.Module):
         item_id = {}
         item_count = 0
 
-        user_set = set(user_list.tolist())
-        item_set = set(item_list.tolist())
-        id_user = torch.zeros(len(user_set))
-        id_item = torch.zeros(len(item_set))
-        label = torch.zeros(len(user_set), len(item_set))
-        flag = torch.zeros(len(user_set), len(item_set))
+        user_num = len(set(user_list.tolist()))
+        item_num = len(set(item_list.tolist()))
+        id_user = torch.zeros(user_num)
+        id_item = torch.zeros(item_num)
+        label = torch.zeros(user_num, item_num)
+        flag = torch.zeros(user_num, item_num)
 
         for i in range(len(user_list)):
             if user_list[i].item() not in user_id:
@@ -50,10 +50,16 @@ class FM_DRM(torch.nn.Module):
             label[user_id[user_list[i].item()], item_id[item_list[i].item()]] = label_list[i]
             flag[user_id[user_list[i].item()], item_id[item_list[i].item()]] = 1
 
+        label[label == 0] = self.impute_label
         label = label.reshape(-1)
         flag = flag.reshape(-1)
-        grid_0 = id_user.repeat(item_count).t().reshape(-1)
+        grid_0 = id_user.repeat(item_count, 1).t().reshape(-1)
         grid_1 = id_item.repeat(user_count).reshape(-1)
+        # print(grid_0[:20])
+        # print(grid_1[:20])
+        # print(label[:20])
+        # print(user_list[:20])
+        # print(item_list[:20])
 
         # grid = torch.meshgrid(user_list, item_list)
         # grid_0 = grid[0].reshape(-1)
