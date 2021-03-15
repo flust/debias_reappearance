@@ -63,6 +63,22 @@
    
 3. Improving Ad Click Prediction by Considering Non-displayed Events
 
+   Reappearance experiments in pytorch.
+
+   The evaluation part of this expriment is as in paper.
+
+   
+
+   Run this experiment:
+
+   ```
+   python main.py --model=New
+   ```
+
+   The parameters can be changed in config.py `DefaultConfig`
+
+   
+
    | Yahoo!R3(10 epoch BCELoss) | NLL(in paper) | NLL     | AUC(in paper) | AUC     |
    | -------------------------- | ------------- | ------- | ------------- | ------- |
    | average($S_c$)             | +0.0%         | +0.0%   | +0.0%         | +0.0%   |
