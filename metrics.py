@@ -1,5 +1,6 @@
 from sklearn.metrics import roc_auc_score
-
+from sklearn.metrics import log_loss
+import numpy as np
 
 def MSE(preds, true):
     squaredError = []
@@ -56,13 +57,20 @@ def RMSE_ips(preds, true, user_num, item_num, inverse_propensity):
     return sqrt(sum(squaredError) / (user_num * item_num))
 
 
+def sigmoid(x):
+    return 1.0 / (1.0 + np.exp(-x))
+
+
 def AUC(true, preds):
     return roc_auc_score(true, preds)
 
 
+# def NLL(true, preds):
+#     import math
+#     s = 0
+#     for i in range(len(true)):
+#         s += math.log(1 + math.exp(- true[i] * preds[i]))
+#     return - s / len(true)
+
 def NLL(true, preds):
-    import math
-    s = 0
-    for i in range(len(true)):
-        s += math.log(1 + math.exp(- true[i] * preds[i]))
-    return - s / len(true)
+    return -log_loss(true, preds, eps=1e-5)
