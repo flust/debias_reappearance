@@ -11,7 +11,8 @@ class FMLoss(nn.Module):
         self.loss = 0.
 
     def forward(self, output, label):
-        self.loss = torch.sum(torch.log(1 + torch.exp(- output * label)))
+        self.loss = torch.sum(torch.pow(output - label, 2))
+        # self.loss = torch.sum(torch.log(1 + torch.exp(- output * label)))
         return self.loss
 
 
@@ -26,14 +27,14 @@ class IPSLoss(nn.Module):
     def forward(self, output, label, inverse_propensity):
         self.loss = torch.tensor(0.0)
         label0 = label.cpu().numpy()
-
+        # print(label0)
         weight = torch.Tensor(
-            list(map(lambda x: (inverse_propensity[int(label0[x]) - 1]), range(0, len(label0))))).to(self.device)
+            list(map(lambda x: (inverse_propensity[int((int(label0[x]) + 1) / 2)]),
+                     range(0, len(label0))))).to(self.device)
+        # weight = torch.ones(label.shape)
 
         # unweightedloss = F.binary_cross_entropy(output, torch.Tensor(label), reduce='none')
-        unweightedloss = output - label
-        unweightedloss = torch.pow(unweightedloss, 2)
-        weightedloss = unweightedloss * weight
+        weightedloss = torch.pow(output - label, 2) * weight
         self.loss = torch.sum(weightedloss)
         return self.loss
 
@@ -55,17 +56,20 @@ class DRMLoss(nn.Module):
         label0 = label.cpu().numpy()
 
         weight = torch.Tensor(
-            list(map(lambda x: (inverse_propensity[int(label0[x]) - 1]) if flag[x] == 1 else 0,
+            list(map(lambda x: (inverse_propensity[int((int(label0[x]) + 1) / 2)]) if flag[x] == 1 else 0,
                      range(0, len(label0))))).to(self.device)
 
         # unweightedloss = F.binary_cross_entropy(output, torch.Tensor(label), reduce='none')
         # unweightedloss = self.l_lowercase(label, output)
         # weightedloss = unweightedloss * weight
         # self.IPS = torch.sum(weightedloss)
+
         self.IPS = torch.sum(weight * self.l_lowercase(label, output))
+        # self.IPS = torch.sum(flag * self.l_lowercase(label, output))
 
         impute_loss = self.l_lowercase(label, output)
-        self.loss1 = self.IPS - torch.sum(impute_loss)
-        self.loss2 = torch.sum(impute_loss * (1 - flag))
+        self.loss1 = self.IPS - 0.001 * torch.sum(impute_loss)
+        self.loss2 = 0.001 * torch.sum(impute_loss * (1 - flag))
+        self.loss = self.loss1 + self.loss2
 
-        return self.loss1 + self.loss2
+        return self.loss

@@ -11,6 +11,10 @@ import numpy as np
 import argparse
 
 
+def sigmoid(x):
+    return 1.0 / (1.0 + np.exp(-x))
+
+
 def train_MF_Naive_or_MF_IPS():
     # train model 'MF_Naive' or 'MF_IPS'
     print('train_MF_Naive_or_MF_IPS begin')
@@ -65,15 +69,15 @@ def train_MF_Naive_or_MF_IPS():
     return model
 
 
-def test_1(model, test_data):
-    # test model 'MF_Naive' or 'MF_IPS'
-    test_data = Yahoo1(opt.test_data)
-    if opt.model == 'MF_IPS':
-        inverse_propensity = np.reciprocal(np.loadtxt(opt.propensity_score))
-    else:
-        inverse_propensity = np.ones(5)
-    (mae, mse, rmse) = evaluate_model(model, test_data, inverse_propensity, opt)
-    print('MAE = %.4f, MSE = %.4f, RMSE = %.4f' % (mae, mse, rmse))
+# def test_1(model, test_data):
+#     # test model 'MF_Naive' or 'MF_IPS'
+#     test_data = Yahoo1(opt.test_data)
+#     if opt.model == 'MF_IPS':
+#         inverse_propensity = np.reciprocal(np.loadtxt(opt.propensity_score))
+#     else:
+#         inverse_propensity = np.ones(5)
+#     (mae, mse, rmse) = evaluate_model(model, test_data, inverse_propensity, opt)
+#     print('MAE = %.4f, MSE = %.4f, RMSE = %.4f' % (mae, mse, rmse))
 
 
 def train_CausEProd():
@@ -172,10 +176,14 @@ def train_FFM(data, train_set, model='FM', inverse_propensity=None, impute_label
         t2 = time()
         if epoch % opt.verbose == 0:
             print('epoch', epoch)
-            true = data.S_te[:, 2]
+            true = data.S_te[:, 2].copy()
             preds = model.predict(torch.LongTensor(data.S_te[:, 0]),
                                   torch.LongTensor(data.S_te[:, 1])).detach().numpy()
 
+            # true[true == -1] = 0
+            # preds = sigmoid(preds)
+            # preds[preds >= 0] = 1
+            # preds[preds < 0] = 0
             nll, auc = evaluate_model_3(true, preds)
             print('Iteration %d[%.1f s]: NLL = %.4f, AUC = %.4f [%.1f s]'
                   % (epoch, t2 - t1, nll, auc, time() - t2))
@@ -186,70 +194,6 @@ def train_FFM(data, train_set, model='FM', inverse_propensity=None, impute_label
 
     # print("End. Best Iteration %d:  MAE = %.4f, MSE = %.4f. " % (best_iter, best_mae, best_mse))
     return best_NLL, best_AUC
-
-#
-# def train_CausE():
-#     # train model 'CausEProd'
-#     print('train_CausE begin')
-#
-#     # collect data
-#     train_data = Yahoo2(opt.s_c_data, opt.s_t_data)
-#     val_data = Yahoo2(opt.test_data)
-#
-#     train_dataloader_s_c = DataLoader(train_data.s_c, opt.batch_size, shuffle=True)
-#     train_dataloader_s_t = DataLoader(train_data.s_t, opt.batch_size, shuffle=True)
-#     # get model
-#     model = getattr(models, opt.model)(train_data.users_num, train_data.items_num,
-#                                        opt.embedding_size, opt.reg_c, opt.reg_c, opt.reg_tc,
-#                                        train_data.s_c[:, :2].tolist(), train_data.s_t[:, :2].tolist())
-#     model.to(opt.device)
-#     lr = opt.lr
-#     optimizer = model.get_optimizer(lr, opt.weight_decay)
-#
-#     best_mse = 10000.
-#     best_mae = 10000.
-#     best_iter = 0
-#
-#     # train
-#     model.train()
-#     for epoch in range(opt.max_epoch):
-#         t1 = time()
-#         for i, data in tqdm(enumerate(train_dataloader_s_c)):
-#             # train model
-#             user = data[:, 0].to(opt.device)
-#             item = data[:, 1].to(opt.device)
-#             label = data[:, 2].to(opt.device)
-#
-#             loss = model.calculate_loss(user.long(), item.long(), label.float(), control=True)
-#             optimizer.zero_grad()
-#             loss.backward()
-#             optimizer.step()
-#
-#         print('Loss:', loss.item())
-#         for i, data in tqdm(enumerate(train_dataloader_s_t)):
-#             # train model
-#             user = data[:, 0].to(opt.device)
-#             item = data[:, 1].to(opt.device)
-#             label = data[:, 2].to(opt.device)
-#
-#             loss = model.calculate_loss(user.long(), item.long(), label.float(), control=False)
-#             optimizer.zero_grad()
-#             loss.backward()
-#             optimizer.step()
-#
-#         t2 = time()
-#         print('Loss:', loss.item())
-#         if epoch % opt.verbose == 0:
-#             print('epoch', epoch)
-#             (mae, mse, rmse) = evaluate_model(model, val_data, None, opt)
-#             print('Iteration %d[%.1f s]: MAE = %.4f, MSE = %.4f, RMSE = %.4f [%.1f s]'
-#                   % (epoch, t2 - t1, mae, mse, rmse, time() - t2))
-#             if mae < best_mae:
-#                 best_mae, best_mse, best_iter = mae, mse, epoch
-#                 torch.save(model.state_dict(), str(type(model)) + "-model2.pth")
-#
-#     print("End. Best Iteration %d:  MAE = %.4f, MSE = %.4f. " % (best_iter, best_mae, best_mse))
-#     return model
 
 
 def train_New():
@@ -267,7 +211,9 @@ def train_New():
     ave_S_c = calculate_CTR(data.S_c[:, 2])
     print("average(S_c): CTR:", ave_S_c)
 
-    ave_S_c_NLL, ave_S_c_AUC = evaluate_model_3(data.S_te[:, -1], np.repeat(ave_S_c, data.S_te.shape[0]))
+    test_label = data.S_te[:, -1].copy()
+    test_label[test_label == -1] = 0
+    ave_S_c_NLL, ave_S_c_AUC = evaluate_model_3(test_label, np.repeat(ave_S_c, data.S_te.shape[0]))
     print('average(S_c): NLL:', ave_S_c_NLL, 'AUC: ', ave_S_c_AUC)
 
 
@@ -276,7 +222,7 @@ def train_New():
     ave_S_t = calculate_CTR(data.S_t[:, 2])
     print("average(S_t): CTR:", ave_S_t)
 
-    ave_S_t_NLL, ave_S_t_AUC = evaluate_model_3(data.S_te[:, -1], np.repeat(ave_S_t, data.S_te.shape[0]))
+    ave_S_t_NLL, ave_S_t_AUC = evaluate_model_3(test_label, np.repeat(ave_S_t, data.S_te.shape[0]))
     print('average(S_t): NLL:', ave_S_t_NLL, 'AUC: ', ave_S_t_AUC)
     print_result('average(S_t)', ave_S_t_NLL, ave_S_t_AUC, ave_S_c_NLL, ave_S_c_AUC)
 
@@ -292,15 +238,15 @@ def train_New():
     # FFM_S_t_NLL, FFM_S_t_AUC = train_FFM(data, 'S_t', 'FM')
     # print('FFM(S_t): NLL:', FFM_S_t_NLL, 'AUC: ', FFM_S_t_AUC)
     # print_result('FFM(S_t)', FFM_S_t_NLL, FFM_S_t_AUC, ave_S_c_NLL, ave_S_c_AUC)
-    #
-    #
+
+
     # # ------ FFM(S_c & S_t) ------
     # print("==================== FFM(S_ct) ====================")
     # FFM_S_ct_NLL, FFM_S_ct_AUC = train_FFM(data, 'S_ct', 'FM')
     # print('FFM(S_ct): NLL:', FFM_S_ct_NLL, 'AUC: ', FFM_S_ct_AUC)
     # print_result('FFM(S_ct)', FFM_S_ct_NLL, FFM_S_ct_AUC, ave_S_c_NLL, ave_S_c_AUC)
-    #
-    #
+
+
     # # ------ IPS ------
     # print("==================== IPS ====================")
     # inverse_propensity = np.reciprocal(np.loadtxt(opt.propensity_score_3))
@@ -312,13 +258,13 @@ def train_New():
     # ------ CausE ------
     # 要实现 FM-CausE 暂且搁置
 
-    # ------ New(avg) ------
-    print("==================== New(avg) ====================")
-    impute_label = np.log(ave_S_t / (1 - ave_S_t))
-    inverse_propensity = np.reciprocal(np.loadtxt(opt.propensity_score_3))
-    New_avg_NLL, New_avg_AUC = train_FFM(data, 'S_ct', 'FM_DRM', inverse_propensity, impute_label)
-    print('New(avg): IPS: NLL:', New_avg_NLL, 'AUC: ', New_avg_AUC)
-    print_result('New(avg)', New_avg_NLL, New_avg_AUC, ave_S_c_NLL, ave_S_c_AUC)
+    # # ------ New(avg) ------
+    # print("==================== New(avg) ====================")
+    # impute_label = np.log(ave_S_t / (1 - ave_S_t))
+    # inverse_propensity = np.reciprocal(np.loadtxt(opt.propensity_score_3))
+    # New_avg_NLL, New_avg_AUC = train_FFM(data, 'S_ct', 'FM_DRM', inverse_propensity, impute_label)
+    # print('New(avg): IPS: NLL:', New_avg_NLL, 'AUC: ', New_avg_AUC)
+    # print_result('New(avg)', New_avg_NLL, New_avg_AUC, ave_S_c_NLL, ave_S_c_AUC)
 
 
     # ------ New(item-avg) ------

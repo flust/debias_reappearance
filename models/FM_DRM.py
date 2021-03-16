@@ -23,7 +23,7 @@ class FM_DRM(torch.nn.Module):
         """
         x = x - 1  # user item begin with 1
         x = self.linear(x) + self.fm(self.embedding(x))
-        return torch.sigmoid(x.squeeze(1))
+        return x.squeeze(1)
 
     def calculate_loss(self, user_list, item_list, label_list):
         user_id = {}
@@ -55,11 +55,6 @@ class FM_DRM(torch.nn.Module):
         flag = flag.reshape(-1)
         grid_0 = id_user.repeat(item_count, 1).t().reshape(-1)
         grid_1 = id_item.repeat(user_count).reshape(-1)
-        # print(grid_0[:20])
-        # print(grid_1[:20])
-        # print(label[:20])
-        # print(user_list[:20])
-        # print(item_list[:20])
 
         # grid = torch.meshgrid(user_list, item_list)
         # grid_0 = grid[0].reshape(-1)

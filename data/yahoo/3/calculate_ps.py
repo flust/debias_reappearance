@@ -6,8 +6,8 @@ import torch
 if __name__ == '__main__':
     print("calculate propensity score begin")
     # load origin data
-    S_c_data = np.loadtxt('./S_c.txt').astype(int)
-    S_t_data = np.loadtxt('./S_t.txt').astype(int)
+    S_c_data = np.loadtxt('./S_c_0.txt').astype(int)
+    S_t_data = np.loadtxt('./S_t_0.txt').astype(int)
     S_ct_data = np.vstack([S_c_data, S_t_data])
 
     # calculate num of user and item

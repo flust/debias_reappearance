@@ -73,4 +73,4 @@ def AUC(true, preds):
 #     return - s / len(true)
 
 def NLL(true, preds):
-    return -log_loss(true, preds, eps=1e-5)
+    return -log_loss(true, preds, eps=1e-7)

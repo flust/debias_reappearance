@@ -29,11 +29,8 @@ class DefaultConfig(object):
     batch_size = 64  # batch size
     embedding_size = 16
 
-    # debug_file = '/tmp/debug'  # if os.path.exists(debug_file): enter ipdb
-    # result_file = 'result.csv'
-
-    max_epoch = 10
-    verbose = 1
+    max_epoch = 20
+    verbose = 10
     lr = 0.001  # initial learning rate
     lr_decay = 0.5  # when val_loss increase, lr = lr*lr_decay
     weight_decay = 1e-5

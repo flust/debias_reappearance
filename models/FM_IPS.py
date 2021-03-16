@@ -22,7 +22,7 @@ class FM_IPS(torch.nn.Module):
         """
         x = x - 1  # user item begin with 1
         x = self.linear(x) + self.fm(self.embedding(x))
-        return torch.sigmoid(x.squeeze(1))
+        return x.squeeze(1)
 
     def calculate_loss(self, user_list, item_list, label_list):
         return self.loss(self.forward(torch.vstack([user_list, item_list]).t()), label_list, self.inverse_propensity)
